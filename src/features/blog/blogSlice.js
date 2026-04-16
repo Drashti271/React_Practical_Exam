@@ -25,6 +25,18 @@ export const getAllBlog = createAsyncThunk(
   }
 );
 
+export const deleteBlog = createAsyncThunk(
+  "blog/deleteBlog",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.delete(`/blog/${id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const blogSlice = createSlice({
   name: "blog",
   initialState: {
@@ -43,6 +55,12 @@ const blogSlice = createSlice({
 
     builder.addCase(getAllBlog.fulfilled, (state, action) => {
       state.loading = false;
+    });
+
+    builder.addCase(deleteBlog.fulfilled, (state, action) => {
+        state.blogData = state.blogData.filter(
+          (blog) => blog._id !== action.payload
+        );
     });
 
   },
